@@ -21,6 +21,15 @@ Plug 'tpope/vim-dispatch'
 Plug 'trekdemo/vim-dispatch-extras'
 ```
 
+With [lazy.nvim](https://github.com/folke/lazy.nvim):
+
+```lua
+{
+  'tpope/vim-dispatch',
+  dependencies = { 'trekdemo/vim-dispatch-extras' },
+}
+```
+
 Or with Vim's packages:
 
 ```sh
