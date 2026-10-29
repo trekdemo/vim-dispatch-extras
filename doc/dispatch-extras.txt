@@ -1,0 +1,61 @@
+*dispatch-extras.txt*  Extra strategies for dispatch.vim
+
+Author:  Gergő Sulymosi
+Repo:    https://github.com/trekdemo/vim-dispatch-extras
+License: Same terms as Vim itself (see |license|)
+
+INTRODUCTION                                    *dispatch-extras*
+
+Adds kitty and rex strategies to dispatch.vim (see |dispatch-strategies|).
+Requires https://github.com/tpope/vim-dispatch.
+
+The handlers are inserted into |g:dispatch_handlers| right after tmux.  Each
+one declines a request unless Vim runs inside its terminal, so the remaining
+strategies keep working everywhere else.
+
+                                                *g:dispatch_extras_no_register*
+To manage |g:dispatch_handlers| yourself, disable the registration and add
+"kitty" and "rex" to the list wherever you like:
+>
+        let g:dispatch_extras_no_register = 1
+<
+STRATEGIES                                      *dispatch-extras-strategies*
+
+Kitty ~
+                                                *dispatch-kitty*
+Foreground makes open in a split respecting the current layout.  The closure
+of the pane triggers a |VimResized| event which loads the results into the
+quickfix list if callbacks are not supported.
+
+This handler requires you to enable kitty's remote control feature via Unix
+socket because (neo)vim has no /dev/tty configured (neovim/neovim#1496).
+>
+        allow_remote_control yes
+        listen_on unix:/tmp/kitty
+<
+See https://sw.kovidgoyal.net/kitty/remote-control/
+
+                                                *g:dispatch_kitty_bias*
+Kitty does not have a way to specify window size and direction explicitly
+because those depend on the layout.  To control the window size, adjust the
+bias Kitty uses to calculate the window size.  It is passed as "--bias=<num>"
+to the "kitten @ launch" command.
+>
+        let g:dispatch_kitty_bias = 20
+<
+Rex ~
+                                                *dispatch-rex*
+Fires when Vim runs inside a Rex terminal and the rex CLI is on the PATH.
+Foreground makes open in a split below Vim's block.  Once the command exits,
+its output is captured with "rex capture" and the split is closed.  The
+closure of the split triggers a |VimResized| event which loads the results
+into the quickfix list if callbacks are not supported.
+
+                                                *g:dispatch_rex_ratio*
+The split gets 30 percent of the space by default.  To change it:
+>
+        let g:dispatch_rex_ratio = 20
+<
+See https://www.superlogical.com/rex/docs/automate/cli
+
+ vim:tw=78:et:ft=help:norl:
